@@ -42,11 +42,11 @@ public class CodeGenerator {
 
         // 数据源配置
         DataSourceConfig dsc = new DataSourceConfig();
-        dsc.setUrl("jdbc:mysql://weixin.junction.com.cn:20087/hw-video?useUnicode=true&useSSL=false&characterEncoding=utf8");
+        dsc.setUrl("jdbc:mysql://127.0.0.1:3306/hw-video?useUnicode=true&useSSL=false&characterEncoding=utf8");
         // dsc.setSchemaName("public");
         dsc.setDriverName("com.mysql.cj.jdbc.Driver");
         dsc.setUsername("root");
-        dsc.setPassword("junction@123");
+        dsc.setPassword("root");
         mpg.setDataSource(dsc);
 
         // 包配置
