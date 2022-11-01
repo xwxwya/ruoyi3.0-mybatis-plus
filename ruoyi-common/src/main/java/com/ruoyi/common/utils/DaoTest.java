@@ -1,5 +1,8 @@
 package com.ruoyi.common.utils;
 
+
+import org.apache.commons.lang3.ArrayUtils;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,11 +20,11 @@ public class DaoTest {
 
 
     public static void main(String[] args) {
-//        System.out.println(getResultMap(ItemRes.class));
+//        System.out.println(getResultMap(PatrolDeviceOrgTree.class));
 
     }
 
-    public static String getUpdateSelective(Class<?> clazz) {
+    public static String getSelective(Class<?> clazz, boolean isUpdate) {
 
         Object obj = null;
         try {
@@ -29,7 +32,7 @@ public class DaoTest {
         } catch (Exception e) {
             return "#Exception.反射生成实体异常#";
         }
-
+        Class<?> superclass = clazz.getSuperclass();
         String clazzName = clazz.getSimpleName();
         String resultMapId = Character.toLowerCase(clazzName.charAt(0)) + clazzName.substring(1) + "Map";
         String pkgName = clazz.getName();
@@ -40,27 +43,45 @@ public class DaoTest {
         resultMap.append("\">\n");
         resultMap.append("UPDATE X_TABLE");
         resultMap.append("\n<set>\n");
-
+        Field[] superFields = superclass.getDeclaredFields();
         Field[] fields = clazz.getDeclaredFields();
-        for (Field f : fields) {
+        Field[] all = (Field[]) ArrayUtils.addAll(superFields, fields);
+        for (Field f : all) {
             String property = f.getName();
             String javaType = f.getType().getName();
             if ("serialVersionUID".equals(property)) {
                 continue;//忽略掉这个属性
             }
             resultMap.append("    <if test=\"");
-            resultMap.append(property + "!=null\">");
+            resultMap.append(property + " !=null");
+            if (f.getType() == String.class) {
+                resultMap.append(" and " + property + " !='' \">");
+            } else {
+                resultMap.append(" \">");
+            }
+            if (!isUpdate) {
+                resultMap.append(" AND ");
+            }
             resultMap.append(property2Column(property).toUpperCase());
-            resultMap.append("=#{" + property + ", jdbcType=" + javaType2jdbcType(javaType.toLowerCase()) + "},</if>\n");
+//            resultMap.append("=#{" + property + ", jdbcType=" + javaType2jdbcType(javaType.toLowerCase()) + "},</if>\n");
+            if (!isUpdate) {
+                if (f.getType() == String.class) {
+                    resultMap.append(" like concat('%',#{" + property + "},'%') </if>\n");
+                } else {
+                    resultMap.append(" = #{" + property + "} </if>\n");
+                }
+            } else {
+                resultMap.append("=#{" + property + "}, </if>\n");
+            }
         }
         resultMap.append("</set>\n");
-        resultMap.append("where id = #{id,jdbcType=VARCHAR}\n");
+        resultMap.append("where id = #{id}\n");
         resultMap.append("</update>");
         return resultMap.toString();
     }
 
     public static void getInsert(Class<?> clazz) {
-        String text = getUpdateSelective(clazz);
+        String text = getSelective(clazz, true);
         Pattern p = Pattern.compile("#\\{[^}]+}");
         Matcher m = p.matcher(text);
 
@@ -184,4 +205,6 @@ public class DaoTest {
     }
 
 }
+
+
 
