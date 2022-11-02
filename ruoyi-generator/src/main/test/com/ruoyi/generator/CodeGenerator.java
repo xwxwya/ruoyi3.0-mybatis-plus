@@ -1,4 +1,4 @@
-package com;
+package com.ruoyi.generator;
 
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.generator.AutoGenerator;
@@ -12,6 +12,7 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.mybatisPlus.MyBaseService;
 import com.ruoyi.common.mybatisPlus.MyBaseServiceImpl;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +34,9 @@ public class CodeGenerator {
         //是否覆盖已有文件
         gc.setFileOverride(true);
         String projectPath = "D:/mpcode";
+        File file = new File(projectPath);
+        delete(file);
+
         gc.setOutputDir(projectPath + "/src/main/java");
         gc.setAuthor("xw");
         gc.setDateType(DateType.ONLY_DATE);
@@ -133,6 +137,24 @@ public class CodeGenerator {
         mpg.setStrategy(strategy);
         mpg.setTemplateEngine(new FreemarkerTemplateEngine());
         mpg.execute();
+    }
+
+    public static void delete(File file){
+        File[] listFiles = file.listFiles();
+        if(listFiles != null)
+        {
+            for(File f: listFiles)
+            {
+                if(f.isDirectory())
+                {
+                    delete(f);
+                }
+                else
+                {
+                    f.delete();
+                }
+            }
+        }
     }
 
 }
