@@ -3,14 +3,11 @@ package com.ruoyi.web.controller.business;
 
 import com.ruoyi.business.entity.Bank;
 import com.ruoyi.business.service.IBankService;
-import com.ruoyi.common.core.controller.BaseController;
-import com.ruoyi.common.core.page.TableDataInfo;
-import org.springframework.web.bind.annotation.GetMapping;
+import com.ruoyi.common.core.controller.BusinessCommonController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * <p>
@@ -22,16 +19,13 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/business/bank")
-public class BankController extends BaseController {
+public class BankController extends BusinessCommonController<IBankService,Bank> {
 
     @Resource
     private IBankService service;
 
-    @GetMapping("/list")
-    public TableDataInfo getList(){
-        List<Bank> list = service.list();
-        return getDataTable(list);
+    @Override
+    public IBankService getService() {
+        return service;
     }
-
-
 }
