@@ -108,7 +108,7 @@ public class CodeGenerator {
         //指定自定义模板路径，注意不要带上.ftl/.vm, 会根据使用的模板引擎自动识别
         // templateConfig.setEntity("templates/entity2.java");
         // templateConfig.setService();
-        // templateConfig.setController();
+        templateConfig.setController("/template/controller.java");
 
         templateConfig.setXml(null);
         mpg.setTemplate(templateConfig);
@@ -139,18 +139,13 @@ public class CodeGenerator {
         mpg.execute();
     }
 
-    public static void delete(File file){
+    public static void delete(File file) {
         File[] listFiles = file.listFiles();
-        if(listFiles != null)
-        {
-            for(File f: listFiles)
-            {
-                if(f.isDirectory())
-                {
+        if (listFiles != null) {
+            for (File f : listFiles) {
+                if (f.isDirectory()) {
                     delete(f);
-                }
-                else
-                {
+                } else {
                     f.delete();
                 }
             }
